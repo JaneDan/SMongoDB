@@ -1,0 +1,15 @@
+{
+    "require": {
+        "phpunit/phpunit": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "SMongoDB\\": "src/SMongoDB/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SMongoDB\\Tests\\": "tests/SMongoDB/Tests/"
+        }
+    }
+}

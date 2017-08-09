@@ -1,0 +1,22 @@
+<phpunit
+        bootstrap="tests/bootstrap.php"
+        colors="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        convertErrorsToExceptions="true"
+        syntaxCheck="true"
+        verbose="true">
+    <php>
+        <server name="MONGO_TEST_HOST" value="http://localhost:27017"/>
+    </php>
+    <testsuites>
+        <testsuite>
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
