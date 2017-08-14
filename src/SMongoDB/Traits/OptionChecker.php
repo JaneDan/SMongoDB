@@ -5,9 +5,9 @@ namespace SMongoDB\Traits;
 use SMongoDB\Exceptions\InvalidArgumentException;
 use SMongoDB\Exceptions\UnexpectedValueException;
 
-trait ParamChecker
+trait OptionChecker
 {
-    public static function checkParamName($name, $supportOptions)
+    public static function checkOptionName($name, $supportOptions)
     {
         if (!array_key_exists($name, $supportOptions)) {
             throw new UnexpectedValueException(
@@ -17,7 +17,7 @@ trait ParamChecker
         }
     }
 
-    public static function checkParamValueType($name, $value, $type)
+    public static function checkOptionValueType($name, $value, $type)
     {
         $ok = false;
 

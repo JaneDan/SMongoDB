@@ -4,7 +4,7 @@ namespace SMongoDB\Namespaces;
 
 use MongoDB\Driver\Manager;
 use SMongoDB\Commands\AbstractCommand;
-use SMongoDB\Traits\ParamChecker;
+use SMongoDB\Traits\OptionChecker;
 
 abstract class AbstractNamespace
 {
@@ -108,7 +108,7 @@ abstract class AbstractNamespace
     private function setReadConcern(array $options)
     {
         if (isset($options['readConcern'])) {
-            $this->checkParam('readConcern', $options['readConcern']);
+            $this->checkOption('readConcern', $options['readConcern']);
             $this->_readConcern = $options['readConcern'];
         } else {
             $this->_readConcern = $this->_manager->getReadConcern();
@@ -118,7 +118,7 @@ abstract class AbstractNamespace
     private function setWriteConcern(array $options)
     {
         if (isset($options['writeConcern'])) {
-            $this->checkParam('writeConcern', $options['writeConcern']);
+            $this->checkOption('writeConcern', $options['writeConcern']);
             $this->_writeConcern = $options['writeConcern'];
         } else {
             $this->_writeConcern = $this->_manager->getWriteConcern();
@@ -128,7 +128,7 @@ abstract class AbstractNamespace
     private function setReadPreference(array $options)
     {
         if (isset($options['readPreference'])) {
-            $this->checkParam('readPreference', $options['readPreference']);
+            $this->checkOption('readPreference', $options['readPreference']);
             $this->_readPreference = $options['readPreference'];
         } else {
             $this->_readPreference = $this->_manager->getReadPreference();
@@ -138,15 +138,15 @@ abstract class AbstractNamespace
     private function setTypeMap(array $options)
     {
         if (isset($options['typeMap'])) {
-            $this->checkParam('typeMap', $options['typeMap']);
+            $this->checkOption('typeMap', $options['typeMap']);
             $this->_typeMap = $options['typeMap'];
         }
     }
 
-    private function checkParam($name, $value)
+    private function checkOption($name, $value)
     {
         $supportOptions = $this->getSupportOptions();
-        ParamChecker::checkParamName($name, $supportOptions);
-        ParamChecker::checkParamValueType($name, $value, $supportOptions[$name]);
+        OptionChecker::checkOptionName($name, $supportOptions);
+        OptionChecker::checkOptionValueType($name, $value, $supportOptions[$name]);
     }
 }

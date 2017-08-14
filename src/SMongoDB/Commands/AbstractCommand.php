@@ -3,7 +3,7 @@
 namespace SMongoDB\Commands;
 
 use MongoDB\Driver\Command;
-use SMongoDB\Traits\ParamChecker;
+use SMongoDB\Traits\OptionChecker;
 
 
 abstract class AbstractCommand
@@ -16,7 +16,7 @@ abstract class AbstractCommand
 
     public function __set($name, $value)
     {
-        $this->checkParam($name, $value);
+        $this->checkOption($name, $value);
         $this->_options[$name] = $value;
     }
 
@@ -37,10 +37,10 @@ abstract class AbstractCommand
         return new Command($this->getCommand());
     }
 
-    private function checkParam($name, $value)
+    private function checkOption($name, $value)
     {
         $supportOptions = $this->getSupportedOptions();
-        ParamChecker::checkParamName($name, $supportOptions);
-        ParamChecker::checkParamValueType($name, $value, $supportOptions[$name]);
+        OptionChecker::checkOptionName($name, $supportOptions);
+        OptionChecker::checkOptionValueType($name, $value, $supportOptions[$name]);
     }
 }
