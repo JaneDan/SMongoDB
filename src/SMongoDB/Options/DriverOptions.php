@@ -2,22 +2,26 @@
 
 namespace SMongoDB\Options;
 
-final class DriverOptions extends AbstractOptions
+use SMongoDB\AbstractOption;
+
+final class DriverOptions extends AbstractOption
 {
     private static $_MONGO_DRIVER_OPTIONS = array(
-        'allow_invalid_hostname',
-        'ca_dir',
-        'ca_file',
-        'crl_file',
-        'pem_file',
-        'pem_pwd',
-        'context',
-        'weak_cert_validation'
+        'allow_invalid_hostname' => 'bool',
+        'ca_dir' => 'string',
+        'ca_file' => 'string',
+        'crl_file' => 'string',
+        'pem_file' => 'string',
+        'pem_pwd' => 'string',
+        'context' => 'resource',
+        'weak_cert_validation' => 'bool'
     );
 
-    private static $_CURSOR_TYPE_MAP = array('typeMap');
+    private static $_CURSOR_TYPE_MAP = array(
+        'typeMap' => array('array', null)
+    );
 
-    protected function getValidKeys(): array
+    protected function getSupportedOptions(): array
     {
         return array_merge(
             self::$_MONGO_DRIVER_OPTIONS,

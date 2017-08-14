@@ -3,26 +3,21 @@
 namespace SMongoDB\Namespaces;
 
 use MongoDB\Driver\Manager;
+use SMongoDB\AbstractOption;
 use SMongoDB\Commands\AbstractCommand;
-use SMongoDB\Traits\OptionChecker;
 
-abstract class AbstractNamespace
+abstract class AbstractNamespace extends AbstractOption
 {
     private $_databaseName;
     private $_manager;
-    private $_readConcern;
-    private $_writeConcern;
-    private $_readPreference;
-    private $_typeMap;
 
     public function __construct(Manager $manager, $databaseName, array $options = array())
     {
         $this->_manager = $manager;
         $this->_databaseName = $databaseName;
-        $this->setReadConcern($options);
-        $this->setReadPreference($options);
-        $this->setWriteConcern($options);
-        $this->setTypeMap($options);
+
+        $this->setDefaultOptions($this->getDefaultOptions());
+        $this->setOptions($options);
     }
 
     public function __debugInfo()
@@ -30,10 +25,10 @@ abstract class AbstractNamespace
         return array(
             'databaseName' => $this->_databaseName,
             'manager' => $this->_manager,
-            'readConcern' => $this->_readConcern,
-            'writeConcern' => $this->_writeConcern,
-            'readPreference' => $this->_readPreference,
-            'typeMap' => $this->_typeMap
+            'readConcern' => $this->getReadConcern(),
+            'writeConcern' => $this->getWriteConcern(),
+            'readPreference' => $this->getReadPreference(),
+            'typeMap' => $this->getTypeMap()
         );
     }
 
@@ -42,7 +37,7 @@ abstract class AbstractNamespace
         $cursor = $this->_manager->executeCommand(
             $this->_databaseName,
             $command->createCommand(),
-            $this->_readPreference
+            $this->getReadPreference()
         );
 
         if (isset($this->_typeMap)) {
@@ -64,13 +59,14 @@ abstract class AbstractNamespace
 
     public function getTypeMap()
     {
-        return $this->_typeMap;
+        return $this->getOptions()['typeMap'];
     }
 
     protected function getReadConcernOptions(): array
     {
         $options = array();
-        $level = $this->_readConcern->getLevel();
+        $readConcern = $this->getReadConcern();
+        $level = $readConcern->getLevel();
 
         if ($level !== null) {
             $options['readConcernLevel'] = $level;
@@ -82,71 +78,52 @@ abstract class AbstractNamespace
     protected function getWriteConcernOptions(): array
     {
         $options = array();
+        $writeConcern = $this->getWriteConcern();
 
-        $w = $this->_writeConcern->getW();
+        $w = $writeConcern->getW();
         if ($w !== null) $options['w'] = $w;
 
-        $wtimeoutMS = $this->_writeConcern->getWtimeout();
+        $wtimeoutMS = $writeConcern->getWtimeout();
         if ($wtimeoutMS !== 0) $options['wtimeoutMS'] = $wtimeoutMS;
 
-        $journal = $this->_writeConcern->getJournal();
+        $journal = $writeConcern->getJournal();
         if ($journal !== null) $options['journal'] = $journal;
 
         return $options;
     }
 
-    protected function getSupportOptions(): array
+    protected function getSupportedOptions(): array
     {
         return array(
             'readConcern' => 'MongoDB\\Driver\\ReadConcern',
             'writeConcern' => 'MongoDB\\Driver\\writeConcern',
             'readPreference' => 'MongoDB\\Driver\\ReadPreference',
-            'typeMap' => 'array'
+            'typeMap' => array('array', 'null')
         );
     }
 
-    private function setReadConcern(array $options)
+    private function getReadConcern()
     {
-        if (isset($options['readConcern'])) {
-            $this->checkOption('readConcern', $options['readConcern']);
-            $this->_readConcern = $options['readConcern'];
-        } else {
-            $this->_readConcern = $this->_manager->getReadConcern();
-        }
+        return $this->getOptions()['readConcern'];
     }
 
-    private function setWriteConcern(array $options)
+    private function getWriteConcern()
     {
-        if (isset($options['writeConcern'])) {
-            $this->checkOption('writeConcern', $options['writeConcern']);
-            $this->_writeConcern = $options['writeConcern'];
-        } else {
-            $this->_writeConcern = $this->_manager->getWriteConcern();
-        }
+        return $this->getOptions()['writeConcern'];
     }
 
-    private function setReadPreference(array $options)
+    private function getReadPreference()
     {
-        if (isset($options['readPreference'])) {
-            $this->checkOption('readPreference', $options['readPreference']);
-            $this->_readPreference = $options['readPreference'];
-        } else {
-            $this->_readPreference = $this->_manager->getReadPreference();
-        }
+        return $this->getOptions()['readPreference'];
     }
 
-    private function setTypeMap(array $options)
+    private function getDefaultOptions(): array
     {
-        if (isset($options['typeMap'])) {
-            $this->checkOption('typeMap', $options['typeMap']);
-            $this->_typeMap = $options['typeMap'];
-        }
-    }
-
-    private function checkOption($name, $value)
-    {
-        $supportOptions = $this->getSupportOptions();
-        OptionChecker::checkOptionName($name, $supportOptions);
-        OptionChecker::checkOptionValueType($name, $value, $supportOptions[$name]);
+        return array(
+            'readConcern' => $this->_manager->getReadConcern(),
+            'writeConcern' => $this->_manager->getWriteConcern(),
+            'readPreference' => $this->_manager->getReadPreference(),
+            'typeMap' => null
+        );
     }
 }

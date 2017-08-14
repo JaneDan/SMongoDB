@@ -2,65 +2,73 @@
 
 namespace SMongoDB\Options;
 
-final class UriOptions extends AbstractOptions
+use SMongoDB\AbstractOption;
+
+final class UriOptions extends AbstractOption
 {
-    private static $_REPLICA_SET = array('replicaSet');
+    private static $_REPLICA_SET = array(
+        'replicaSet' => 'string'
+    );
 
     private static $_CONNECTION = array(
-        'ssl',
-        'connectTimeoutMS',
-        'socketTimeoutMS'
+        'ssl' => 'bool',
+        'connectTimeoutMS' => 'integer',
+        'socketTimeoutMS' => 'integer'
     );
 
     private static $_CONNECTION_POOL = array(
-        'maxPoolSize',
-        'minPoolSize',
-        'maxIdleTimeMS',
-        'waitQueueMultiple',
-        'waitQueueTimeoutMS'
+        'maxPoolSize' => 'integer',
+        'minPoolSize' => 'integer',
+        'maxIdleTimeMS' => 'integer',
+        'waitQueueMultiple' => 'integer',
+        'waitQueueTimeoutMS' => 'integer'
     );
 
     private static $_WRITE_CONCERN = array(
-        'w',
-        'wtimeoutMS',
-        'journal'
+        'w' => array('string', 'integer'),
+        'wtimeoutMS' => 'integer',
+        'journal' => 'bool'
     );
 
-    private static $_READ_CONCERN = array('readConcernLevel');
+    private static $_READ_CONCERN = array(
+        'readConcernLevel' => 'integer'
+    );
 
     private static $_READ_PREFERENCE = array(
-        'readPreference',
-        'maxStalenessSeconds',
-        'readPreferenceTags'
+        'readPreference' => 'string',
+        'maxStalenessSeconds' => 'integer',
+        'readPreferenceTags' => 'string'
     );
 
     private static $_AUTHENTICATION = array(
-        'authSource',
-        'authMechanism',
-        'gssapiServiceName'
+        'authSource' => 'string',
+        'authMechanism' => 'string',
+        'gssapiServiceName' => 'string'
     );
 
     private static $_SERVER = array(
-        'localThresholdMS',
-        'serverSelectionTimeoutMS',
-        'serverSelectionTryOnce',
-        'heartbeatFrequencyMS'
+        'localThresholdMS' => 'integer',
+        'serverSelectionTimeoutMS' => 'integer',
+        'serverSelectionTryOnce' => 'bool',
+        'heartbeatFrequencyMS' => 'integer'
     );
 
-    private static $_MISCELLANEOUS = array('uuidRepresentation');
+    private static $_MISCELLANEOUS = array(
+        'uuidRepresentation' => 'string'
+    );
 
     private static $_MONGO_DRIVER_OPTIONS = array(
-        'appname',
-        'authMechanismProperties',
-        'canonicalizeHostname',
-        'password',
-        'safe',
-        'slaveOk',
-        'socketCheckIntervalMS',
-        'username'
+        'appname' => 'string',
+        'authMechanismProperties' => 'array',
+        'canonicalizeHostname' => 'bool',
+        'password' => 'string',
+        'safe' => 'bool',
+        'slaveOk' => 'bool',
+        'socketCheckIntervalMS' => 'integer',
+        'username' => 'string'
     );
 
-    protected function getValidKeys(): array
+    protected function getSupportedOptions(): array
     {
         return array_merge(
             self::$_REPLICA_SET,
